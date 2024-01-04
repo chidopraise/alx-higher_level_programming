@@ -1,11 +1,13 @@
 #!/bin/bash
-pyfile="$PYFILE"
-outputfile="${pyfile%.py}.pyc"
 
-echo "Compiling $pyfile ..."
-python3 -m compileall -b "$pyfile"
-
-if [ -e "__pycache__/$outputfile" ]; then
-    mv "__pycache__/$outputfile" .
-    rm -rf "__pycache__"
+if [ -z "$PYFILE" ]; then
+	echo "Error: PYFILE environment variable not set."
+	exit 1
 fi
+
+OUTPUT_FILE="${PYFILE}c"
+echo "Compiling $PYFILE ..."
+python3 -m py_compile "$PYFILE" && mv "__pycache__/$PYFILE.cpython-*.pyc" "$OUTPUT_FILE" && rmdir "__pycache__"
+
+ls -l "$OUTPUT_FILE"
+
