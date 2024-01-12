@@ -1,74 +1,68 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <Python.h>
-#include <stdio.h>
-#include <stddef.h>
 
 /**
- * print_python_list - Prints information about Python lists
- * @p: Pointer to the PyObject (Python list)
+ * print_python_list - Function that prints basic info about python objects
+ * @p: PyObject
  */
 void print_python_list(PyObject *p);
 void print_python_bytes(PyObject *p);
 
 void print_python_list(PyObject *p)
 {
-	Py_ssize_t size, i;
-	PyObject *element;
+	int size, i, alloc;
+	PyVarObject *var = (PyVarObject *)p;
+	PyListObject *list = (PyListObject *)p;
+	const char *type;
 
-	if (!PyList_Check(p))
-	{
-		fprintf(stderr, "[ERROR] Invalid Python List\n");
-		return;
-	}
+	size = var->ob_size;
+	alloc = list->allocated;
 
-	size = PyList_Size(p);
 	printf("[*] Python list info\n");
-	printf("[*] Size of the Python List = %ld\n", size);
-	printf("[*] Allocated = %ld\n", ((PyListObject *)p)->allocated);
+	printf("[*] Size of the Python List = %d\n", size);
+	printf("[*] Allocated = %d\n", alloc);
 
 	for (i = 0; i < size; i++)
 	{
-		element = PyList_GetItem(p, i);
-		if (element == NULL)
-		{
-			fprintf(stderr, "[ERROR] Element retrieval failed\n");
-			return;
-		}
-
-		printf("Element %ld: %s\n", i, Py_TYPE(element)->tp_name);
+		type = list->ob_item[i]->ob_type->tp_name;
+		printf("Element %d: %s\n", i, type);
+		if (strcmp(type, "bytes") == 0)
+			print_python_bytes(list->ob_item[i]);
 	}
 }
 
 /**
- * print_python_bytes - Prints information about Python bytes
- * @p: Pointer to the PyObject (Python bytes)
+ * print_python_bytes - Fucntion that prints basic info of python bytes
+ * @p: Pyobject of byte CPython structure
  */
 void print_python_bytes(PyObject *p)
 {
-	Py_ssize_t size, i;
-	char *string;
-
-	if (!PyBytes_Check(p))
-	{
-		fprintf(stderr, "[ERROR] Invalid Bytes Object\n");
-		return;
-	}
+	PyBytesObject *bytes = (PyBytesObject *)p;
+	unsigned char size, c;
 
 	printf("[.] bytes object info\n");
-	size = PyBytes_Size(p);
-	printf("  size: %ld\n", size);
-
-	string = PyBytes_AsString(p);
-	if (string == NULL)
+	if (strcmp(p->ob_type->tp_name, "bytes") != 0)
 	{
-		fprintf(stderr, "[ERROR] Unable to retrieve string data\n");
+		printf("  [ERROR] Invalid Bytes Object\n");
 		return;
 	}
 
-	printf("  trying string: %s\n", string);
+	printf("  size: %ld\n", ((PyVarObject *)p)->ob_size);
+	printf("  trying string: %s\n", bytes->ob_sval);
 
-	printf("  first 10 bytes: ");
-	for (i = 0; i < size && i < 10; i++)
-		printf("%02hhx ", string[i]);
-	printf("\n");
+	if (((PyVarObject *)p)->ob_size > 10)
+		size = 10;
+	else
+		size = ((PyVarObject *)p)->ob_size + 1;
+
+	printf("  first %d bytes: ", size);
+	for (c = 0; c < size; c++)
+	{
+		printf("%02hhx", bytes->ob_sval[c]);
+		if (c == (size - 1))
+			printf("\n");
+		else
+			printf(" ");
+	}
 }
