@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <Python.h>
-#include "/usr/include/python3.4/bytesobject.h"
 #include <stdio.h>
 #include <stddef.h>
 
@@ -8,6 +7,9 @@
  * print_python_list - Prints information about Python lists
  * @p: Pointer to the PyObject (Python list)
  */
+void print_python_list(PyObject *p);
+void print_python_bytes(PyObject *p);
+
 void print_python_list(PyObject *p)
 {
 	Py_ssize_t size, i;
