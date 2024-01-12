@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <Python.h>
+#include "/usr/include/python3.4/bytesobject.h"
 #include <stdio.h>
 #include <stddef.h>
 
