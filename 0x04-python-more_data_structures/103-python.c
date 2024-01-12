@@ -1,5 +1,7 @@
+#include <stdlib.h>
 #include <Python.h>
 #include <stdio.h>
+#include <stddef.h>
 
 /**
  * print_python_list - Prints information about Python lists
