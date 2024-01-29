@@ -6,16 +6,7 @@ import sys
 
 def init_board(n):
     """Initialize an `n`x`n` sized chessboard with 0's."""
-    board = []
-    [board.append([]) for i in range(n)]
-    [row.append(' ') for i in range(n) for row in board]
-    return board
-
-
-def board_deepcopy(board):
-    """Return a deepcopy of a chessboard."""
-    if isinstance(board, list):
-        return list(map(board_deepcopy, board))
+    board = [[' '] * n for _ in range(n)]
     return board
 
 
@@ -63,7 +54,7 @@ def xout(board, row, col):
     for r in range(row - 1, -1, -1):
         if c < 0:
             break
-        board[r][c]
+        board[r][c] = "x"
         c -= 1
     # X out all spots diagonally up to the right
     c = col + 1
@@ -97,7 +88,7 @@ def recursive_solve(board, row, queens, solutions):
 
     for c in range(len(board)):
         if board[row][c] == " ":
-            tmp_board = board_deepcopy(board)
+            tmp_board = [row[:] for row in board]
             tmp_board[row][c] = "Q"
             xout(tmp_board, row, c)
             solutions = recursive_solve(tmp_board, row + 1,
@@ -110,7 +101,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
-    if sys.argv[1].isdigit() is False:
+    if not sys.argv[1].isdigit():
         print("N must be a number")
         sys.exit(1)
     if int(sys.argv[1]) < 4:
