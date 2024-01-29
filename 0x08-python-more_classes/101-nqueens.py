@@ -1,50 +1,49 @@
 #!/usr/bin/python3
 
+
 import sys
 
+def nQueens(n):
 
-def n_queens(n):
+    queens = [0] * n
+    print(queens)
+    s = n
 
-    queens = [-1] * n  # Initialize queens list with -1 (no queen placed)
-    solve_n_queens(queens, 0)
+    while True:
+        while(n > 1):
+            if valid(queens, n) == True:
+                n = n -1
+            else:
+                queens[n] += 1
+                if queens[n] >= s:
+                    queens[n] = 0
+                    queens[n + 1] += 1
+        print("solution")
+        print[queens]
+        queens[0] += 1
+        n = 0
 
+    def valid(queens, n):
+        i = n + 1
+        while i < s:
+            if (queens[i] == queens[n]):
+                return False
+        i = n + 1
+        while i < s:
+            x = 1
+            if queens[i] == (queens[n] - x):
+                return False
+            i + 1
+            x + 1
+        i = n +1
+        while i < s:
+            x = 1
+            if queens[i] == (queens[n] + x):
+                return False
+            i + 1
+            x + 1
+        return True
 
-def solve_n_queens(queens, row):
-
-    n = len(queens)
-
-    if row == n:  # All queens are placed, print the solution
-        print_solution(queens)
-        return
-
-    for col in range(n):
-        if is_safe(queens, row, col):
-            queens[row] = col
-            solve_n_queens(queens, row + 1)
-            queens[row] = -1  # Backtrack
-
-
-def is_safe(queens, row, col):
-
-    for prev_row in range(row):
-        # Check if there is a queen in the same column or diagonal
-        if (
-            queens[prev_row] == col or
-            queens[prev_row] - prev_row == col - row or
-            queens[prev_row] + prev_row == col + row
-        ):
-            return False
-    return True
-
-
-def print_solution(queens):
-
-    for col in queens:
-        print("." * col + "Q" + "." * (len(queens) - col - 1))
-    print()
-
-
-if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         exit(1)
@@ -59,4 +58,4 @@ if __name__ == "__main__":
         print("N must be at least 4")
         exit(1)
 
-    n_queens(n)
+    nQueens(n)
